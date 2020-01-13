@@ -51,7 +51,7 @@ const toggleScrolling = function (editor, state) {
  */
 const resize = function (editor, oldSize) {
   let deltaSize, doc, body, resizeHeight, myHeight;
-  let marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom;
+  let marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom, root;
   const dom = editor.dom;
 
   doc = editor.getDoc();
@@ -65,6 +65,7 @@ const resize = function (editor, oldSize) {
   }
 
   body = doc.body;
+  root = body.parentElement;
   resizeHeight = Settings.getAutoResizeMinHeight(editor);
 
   // Calculate outer height of the body element using CSS styles
@@ -84,6 +85,8 @@ const resize = function (editor, oldSize) {
     // eslint-disable-next-line no-nested-ternary
     myHeight = Env.ie ? body.scrollHeight : (Env.webkit && body.clientHeight === 0 ? 0 : body.offsetHeight);
   }
+
+  myHeight = Math.max(myHeight, root.offsetHeight);
 
   // Don't make it smaller than the minimum height
   if (myHeight > Settings.getAutoResizeMinHeight(editor)) {

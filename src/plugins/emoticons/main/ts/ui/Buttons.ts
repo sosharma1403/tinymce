@@ -8,11 +8,17 @@
 import PanelHtml from './PanelHtml';
 
 const insertEmoticon = function (editor, src, alt) {
-  editor.insertContent(editor.dom.createHTML('img', { src, alt }));
+  editor.insertContent(editor.dom.createHTML('img', {
+    src,
+    alt,
+    'style': 'width: 18px; height: 18px; outline:none; resize: none; pointer-events: none',
+    'data-mce-resize': false,
+    'contenteditable': false
+  }));
 };
 
 const register = function (editor, pluginUrl) {
-  const panelHtml = PanelHtml.getHtml(pluginUrl);
+  const panelHtml = PanelHtml.getHtml(pluginUrl, editor);
 
   editor.addButton('emoticons', {
     type: 'panelbutton',

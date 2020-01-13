@@ -14,16 +14,16 @@ const emoticons = [
   ['tongue-out', 'undecided', 'wink', 'yell']
 ];
 
-const getHtml = function (pluginUrl) {
+const getHtml = function (pluginUrl, editor) {
   let emoticonsHtml;
 
   emoticonsHtml = '<table role="list" class="mce-grid">';
 
-  Tools.each(emoticons, function (row) {
+  Tools.each(emoticons.concat(editor.settings.emoticons_list_custom || []), function (row) {
     emoticonsHtml += '<tr>';
 
     Tools.each(row, function (icon) {
-      const emoticonUrl = pluginUrl + '/img/smiley-' + icon + '.gif';
+      const emoticonUrl = (editor.settings.emoticons_url || pluginUrl + '/img') + '/smiley-' + icon + '.gif';
 
       emoticonsHtml += '<td><a href="#" data-mce-url="' + emoticonUrl + '" data-mce-alt="' + icon + '" tabindex="-1" ' +
         'role="option" aria-label="' + icon + '"><img src="' +

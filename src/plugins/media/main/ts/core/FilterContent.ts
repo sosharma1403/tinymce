@@ -32,7 +32,7 @@ const setup = function (editor) {
     });
 
     // Converts iframe, video etc into placeholder images
-    editor.parser.addNodeFilter('iframe,video,audio,object,embed,script',
+    editor.parser.addNodeFilter('audio,object,embed,script',
       Nodes.placeHolderConverter(editor));
 
     // Replaces placeholder images with real elements for video, object, iframe etc
