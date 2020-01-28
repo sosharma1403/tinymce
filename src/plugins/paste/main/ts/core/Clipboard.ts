@@ -7,7 +7,6 @@
 
 import Env from 'tinymce/core/api/Env';
 import Delay from 'tinymce/core/api/util/Delay';
-import Tools from 'tinymce/core/api/util/Tools';
 import VK from 'tinymce/core/api/util/VK';
 import Events from '../api/Events';
 import InternalHtml from './InternalHtml';
@@ -100,10 +99,7 @@ const getDataTransferItems = (dataTransfer: DataTransfer): ClipboardContents => 
  * @return {Object} Object with mime types and data for those mime types.
  */
 const getClipboardContent = (editor: Editor, clipboardEvent: ClipboardEvent) => {
-  const content = getDataTransferItems(clipboardEvent.clipboardData || (editor.getDoc() as any).dataTransfer);
-
-  // Edge 15 has a broken HTML Clipboard API see https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11877517/
-  return Utils.isMsEdge() ? Tools.extend(content, { 'text/html': '' }) : content;
+  return getDataTransferItems(clipboardEvent.clipboardData || (editor.getDoc() as any).dataTransfer);
 };
 
 const hasContentType = (clipboardContent: ClipboardContents, mimeType: string) => {

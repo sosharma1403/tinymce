@@ -10,6 +10,7 @@ import Settings from '../api/Settings';
 import Parser from './Parser';
 import Protect from './Protect';
 import { Editor } from 'tinymce/core/api/Editor';
+import { document } from '@ephox/dom-globals';
 
 const each = Tools.each;
 
@@ -90,12 +91,14 @@ const handleSetContent = function (editor: Editor, headState, footState, evt) {
   if (styles) {
     dom.add(headElm, 'style', {
       id: 'fullpage_styles'
-    }, styles);
+    });
 
     // Needed for IE 6/7
     elm = dom.get('fullpage_styles');
     if (elm.styleSheet) {
       elm.styleSheet.cssText = styles;
+    } else {
+      elm.appendChild(document.createTextNode(styles));
     }
   }
 
