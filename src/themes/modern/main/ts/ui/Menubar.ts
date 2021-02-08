@@ -39,17 +39,17 @@ const isSeparator = function (namedMenuItem) {
   return namedMenuItem && namedMenuItem.item.text === '|';
 };
 
-const cleanupMenu = function (namedMenuItems, removedMenuItems) {
+const cleanupMenu = function (namedMenuItems: any[], removedMenuItems): any[] {
   const menuItemsPass1 = Arr.filter(namedMenuItems, function (namedMenuItem) {
     return removedMenuItems.hasOwnProperty(namedMenuItem.name) === false;
   });
 
-  const menuItemsPass2 = Arr.filter(menuItemsPass1, function (namedMenuItem, i, namedMenuItems) {
-    return !isSeparator(namedMenuItem) || !isSeparator(namedMenuItems[i - 1]);
+  const menuItemsPass2 = Arr.filter(menuItemsPass1, function (namedMenuItem, i) {
+    return !isSeparator(namedMenuItem) || !isSeparator(menuItemsPass1[i - 1]);
   });
 
-  return Arr.filter(menuItemsPass2, function (namedMenuItem, i, namedMenuItems) {
-    return !isSeparator(namedMenuItem) || i > 0 && i < namedMenuItems.length - 1;
+  return Arr.filter(menuItemsPass2, function (namedMenuItem, i) {
+    return !isSeparator(namedMenuItem) || i > 0 && i < menuItemsPass2.length - 1;
   });
 };
 

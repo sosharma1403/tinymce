@@ -1,12 +1,14 @@
 import { Keyboard, Pipeline } from '@ephox/agar';
+import { UnitTest } from '@ephox/bedrock-client';
+import { document } from '@ephox/dom-globals';
+import { Arr } from '@ephox/katamari';
 import { LegacyUnit, TinyDom, TinyLoader } from '@ephox/mcagar';
 import Env from 'tinymce/core/api/Env';
-import * as CaretContainer from 'tinymce/core/caret/CaretContainer';
-import KeyUtils from '../module/test/KeyUtils';
 import VK from 'tinymce/core/api/util/VK';
+import * as CaretContainer from 'tinymce/core/caret/CaretContainer';
+import Zwsp from 'tinymce/core/text/Zwsp';
 import Theme from 'tinymce/themes/modern/Theme';
-import { UnitTest } from '@ephox/bedrock';
-import { document } from '@ephox/dom-globals';
+import KeyUtils from '../module/test/KeyUtils';
 
 UnitTest.asynctest('browser.tinymce.core.SelectionOverridesTest', function () {
   const success = arguments[arguments.length - 2];
@@ -191,6 +193,29 @@ UnitTest.asynctest('browser.tinymce.core.SelectionOverridesTest', function () {
     LegacyUnit.equal(editor.selection.getNode().getAttribute('data-mce-caret'), 'after');
   });
 
+  suite.test('set range after ce=false element but lean backwards', function (editor) {
+    editor.setContent('<p><span contenteditable="false">Noneditable1</span><span contenteditable="false">Noneditable2</span></p>', {format: 'raw'});
+
+    const rng = document.createRange();
+    const firstSpan = editor.dom.select('span[contenteditable=false]')[0];
+    const secondSpan = editor.dom.select('span[contenteditable=false]')[1];
+    const p = secondSpan.parentNode;
+    if (firstSpan.previousSibling) {
+      p.removeChild(firstSpan.previousSibling);
+    }
+    p.appendChild(document.createTextNode(Zwsp.ZWSP));
+
+    rng.setEnd(secondSpan.nextSibling, 1);
+    rng.setStartBefore(firstSpan);
+
+    editor.selection.setRng(rng, false);
+    const newRng = editor.selection.getRng();
+
+    // We want to ensure the selection hasn't jumped to any one of the cef spans, with offset to the left and right of it
+    const passCondition = !(newRng.startContainer === newRng.endContainer && (newRng.startOffset + 1) === newRng.endOffset);
+    LegacyUnit.equal(passCondition, true);
+  });
+
   suite.test('set range after ce=false element but lean forwards', function (editor) {
     editor.setContent('<p contenteditable="false">1</p><p contenteditable="false">2</p>');
 
@@ -236,6 +261,25 @@ UnitTest.asynctest('browser.tinymce.core.SelectionOverridesTest', function () {
     rng = editor._selectionOverrides.showCaret(1, editor.dom.select('p[contenteditable=false]')[1], false);
     LegacyUnit.equal(true, rng === null, 'Should not return a range excluded by ShowCaret event');
     editor._selectionOverrides.hideFakeCaret();
+  });
+
+  suite.test('set range in short ended element', function (editor) {
+    Arr.each(['br', 'img', 'input'], (elmName) => {
+      editor.setContent('<p><' + elmName + '/></p>');
+      const paraElem = editor.dom.select('p')[0];
+      const elem = editor.dom.select(elmName)[0];
+
+      const rng = document.createRange();
+      rng.setStart(elem, 0);
+      rng.setEnd(elem, 0);
+      editor.selection.setRng(rng);
+
+      const newRng = editor.selection.getRng();
+      LegacyUnit.equal(newRng.startContainer, paraElem, `Start container should be before ${elmName}`);
+      LegacyUnit.equal(newRng.startOffset, 0, `Start offset should be before ${elmName}`);
+      LegacyUnit.equal(newRng.endContainer, paraElem, `End container should be before ${elmName}`);
+      LegacyUnit.equal(newRng.endOffset, 0, `End offset should be before ${elmName}`);
+    });
   });
 
   TinyLoader.setup(function (editor, onSuccess, onFailure) {

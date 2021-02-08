@@ -1,10 +1,11 @@
 import { Assertions, Chain, GeneralSteps, Logger, Pipeline, Step } from '@ephox/agar';
 import { TinyApis, TinyLoader } from '@ephox/mcagar';
-import { UnitTest } from '@ephox/bedrock';
+import { UnitTest } from '@ephox/bedrock-client';
 import { document } from '@ephox/dom-globals';
 import GetSelectionContent from 'tinymce/core/selection/GetSelectionContent';
 import { Editor } from 'tinymce/core/api/Editor';
 import Theme from 'tinymce/themes/modern/Theme';
+import Env from 'tinymce/core/api/Env';
 
 UnitTest.asynctest('browser.tinymce.selection.GetSelectionContentTest', (success, failure) => {
   Theme();
@@ -89,6 +90,11 @@ UnitTest.asynctest('browser.tinymce.selection.GetSelectionContentTest', (success
         sFocusDiv,
         sAssertGetContent('Should be some content', editor, 'ab', { format: 'text' }),
         sRemoveTestDiv
+      ])),
+      Logger.t('Should be text content with newline', GeneralSteps.sequence([
+        tinyApis.sSetContent('<p>ab<br/>cd</p>'),
+        tinyApis.sSetSelection([0, 0], 0, [0, 2], 2),
+        sAssertGetContent('Should be some content', editor, `ab${Env.ie === 11 ? '\r\n' : '\n'}cd`, { format: 'text' })
       ]))
     ], onSuccess, onFailure);
   }, {

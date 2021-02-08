@@ -5,9 +5,9 @@
  * For commercial licenses see https://www.tiny.cloud/
  */
 
-import Schema from './Schema';
-import Entities from './Entities';
 import Tools from '../util/Tools';
+import Entities from './Entities';
+import Schema from './Schema';
 
 declare const unescape: any;
 
@@ -56,8 +56,12 @@ const isValidPrefixAttrName = function (name) {
   return name.indexOf('data-') === 0 || name.indexOf('aria-') === 0;
 };
 
-const trimComments = function (text) {
-  return text.replace(/<!--|-->/g, '');
+const trimComments = function (text: string) {
+  let sanitizedText = text;
+  while (/<!--|--!?>/g.test(sanitizedText)) {
+    sanitizedText = sanitizedText.replace(/<!--|--!?>/g, '');
+  }
+  return sanitizedText;
 };
 
 const isInvalidUri = (settings, uri: string) => {
@@ -269,7 +273,7 @@ export function SaxParser(settings, schema = Schema()) {
 
     // Precompile RegExps and map objects
     tokenRegExp = new RegExp('<(?:' +
-      '(?:!--([\\w\\W]*?)-->)|' + // Comment
+      '(?:!--([\\w\\W]*?)--!?>)|' + // Comment
       '(?:!\\[CDATA\\[([\\w\\W]*?)\\]\\]>)|' + // CDATA
       '(?:!DOCTYPE([\\w\\W]*?)>)|' + // DOCTYPE
       '(?:\\?([^\\s\\/<>]+) ?([\\w\\W]*?)[?/]>)|' + // PI
