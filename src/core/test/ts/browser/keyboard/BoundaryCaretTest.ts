@@ -5,7 +5,8 @@ import CaretPosition from 'tinymce/core/caret/CaretPosition';
 import BoundaryCaret from 'tinymce/core/keyboard/BoundaryCaret';
 import BoundaryLocation from 'tinymce/core/keyboard/BoundaryLocation';
 import Zwsp from 'tinymce/core/text/Zwsp';
-import { UnitTest } from '@ephox/bedrock';
+import { UnitTest } from '@ephox/bedrock-client';
+import { HTMLDivElement } from '@ephox/dom-globals';
 
 UnitTest.asynctest('browser.tinymce.core.keyboard.BoundaryCaretTest', function () {
   const success = arguments[arguments.length - 2];
@@ -25,7 +26,7 @@ UnitTest.asynctest('browser.tinymce.core.keyboard.BoundaryCaretTest', function (
 
   const sTestRenderCaret = function (html, elementPath, offset, expectedHtml, expectedPath, expectedOffset) {
     return Step.sync(function () {
-      const elm = Element.fromHtml('<div>' + html + '</div>');
+      const elm = Element.fromHtml<HTMLDivElement>('<div>' + html + '</div>');
       const location = createLocation(elm, elementPath, offset);
       const caret = Cell(null);
 

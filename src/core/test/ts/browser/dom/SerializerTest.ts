@@ -6,7 +6,7 @@ import DOMUtils from 'tinymce/core/api/dom/DOMUtils';
 import TrimHtml from 'tinymce/core/dom/TrimHtml';
 import ViewBlock from '../../module/test/ViewBlock';
 import Zwsp from 'tinymce/core/text/Zwsp';
-import { UnitTest } from '@ephox/bedrock';
+import { UnitTest } from '@ephox/bedrock-client';
 import { document } from '@ephox/dom-globals';
 
 declare const escape: any;
@@ -777,6 +777,25 @@ UnitTest.asynctest('browser.tinymce.core.dom.SerializerTest', function () {
     LegacyUnit.equal(
       ser.serialize(DOM.get('test'), { getInner: true }),
       '<p>&nbsp;</p>'
+    );
+  });
+
+  suite.test('nested bookmark nodes', () => {
+    const ser = Serializer({ });
+
+    DOM.setHTML('test', '<p>' +
+      '<span data-mce-type="bookmark" id="mce_5_start" data-mce-style="overflow:hidden;line-height:0px" style="overflow:hidden;line-height:0px">' +
+        '<span data-mce-type="bookmark" id="mce_6_start" data-mce-style="overflow:hidden;line-height:0px" style="overflow:hidden;line-height:0px"></span>' +
+        '<span data-mce-type="bookmark" id="mce_7_start" data-mce-style="overflow:hidden;line-height:0px" style="overflow:hidden;line-height:0px"></span>' +
+      '</span>' +
+      'a' +
+      '<span data-mce-type="bookmark" id="mce_10_start" data-mce-style="overflow:hidden;line-height:0px" style="overflow:hidden;line-height:0px"></span>' +
+      '<span data-mce-type="bookmark" id="mce_9_start" data-mce-style="overflow:hidden;line-height:0px" style="overflow:hidden;line-height:0px"></span>' +
+      '<span data-mce-type="bookmark" id="mce_8_start" data-mce-style="overflow:hidden;line-height:0px" style="overflow:hidden;line-height:0px"></span>' +
+    '</p>');
+    LegacyUnit.equal(
+      ser.serialize(DOM.get('test'), { getInner: true }),
+      '<p>a</p>'
     );
   });
 

@@ -1,11 +1,11 @@
 import { Assertions, Chain, Cursors, GeneralSteps, Logger, Pipeline } from '@ephox/agar';
-import { UnitTest } from '@ephox/bedrock';
+import { UnitTest } from '@ephox/bedrock-client';
 import { Id, Merger } from '@ephox/katamari';
 import { Attr, Element, Insert, Remove, Selectors, Traverse } from '@ephox/sugar';
 
 import EditorManager from 'tinymce/core/api/EditorManager';
 import Plugin from 'tinymce/plugins/table/Plugin';
-import { document } from '@ephox/dom-globals';
+import { document, HTMLElement } from '@ephox/dom-globals';
 
 UnitTest.asynctest('browser.tinymce.plugins.table.TableAsBodyTest', function () {
   const success = arguments[arguments.length - 2];
@@ -35,7 +35,7 @@ UnitTest.asynctest('browser.tinymce.plugins.table.TableAsBodyTest', function () 
     return Chain.async(function (_, next, die) {
       const randomId = Id.generate('tiny-loader');
       settings = settings || {};
-      const target = Element.fromHtml(html);
+      const target = Element.fromHtml<HTMLElement>(html);
 
       Attr.set(target, 'id', randomId);
       Insert.append(Element.fromDom(document.body), target);

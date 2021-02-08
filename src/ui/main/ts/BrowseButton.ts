@@ -87,9 +87,10 @@ export default Button.extend({
       e.stopPropagation();
     });
 
-    $(self.getEl('button')).on('click', function (e) {
+    $(self.getEl('button')).on('click touchstart', function (e) {
       e.stopPropagation();
       input.click();
+      e.preventDefault();
     });
 
     // in newer browsers input doesn't have to be attached to dom to trigger browser dialog

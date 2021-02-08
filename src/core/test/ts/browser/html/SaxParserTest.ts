@@ -1,10 +1,10 @@
-import { LegacyUnit } from '@ephox/mcagar';
 import { Pipeline } from '@ephox/agar';
+import { UnitTest } from '@ephox/bedrock-client';
+import { LegacyUnit } from '@ephox/mcagar';
 import SaxParser from 'tinymce/core/api/html/SaxParser';
-import Writer from 'tinymce/core/api/html/Writer';
 import Schema from 'tinymce/core/api/html/Schema';
+import Writer from 'tinymce/core/api/html/Writer';
 import Tools from 'tinymce/core/api/util/Tools';
-import { UnitTest } from '@ephox/bedrock';
 
 UnitTest.asynctest('browser.tinymce.core.html.SaxParserTest', function () {
   const success = arguments[arguments.length - 2];
@@ -420,6 +420,13 @@ UnitTest.asynctest('browser.tinymce.core.html.SaxParserTest', function () {
     parser.parse('<b>a<!-- value -->b</b>');
     LegacyUnit.equal(writer.getContent(), '<b>a<!-- value -->b</b>', 'Parse comment with tags around it.');
     LegacyUnit.deepEqual(counter.counts, { comment: 1, text: 2, start: 1, end: 1 }, 'Parse comment with tags around it counts.');
+
+    counter = createCounter(writer);
+    parser = SaxParser(counter, schema);
+    writer.reset();
+    parser.parse('<!-- value --!>');
+    LegacyUnit.equal(writer.getContent(), '<!-- value -->', 'Parse comment with exclamation in end value.');
+    LegacyUnit.deepEqual(counter.counts, { comment: 1 }, 'Parse comment with exclamation in end value counts.');
   });
 
   suite.test('Parsing cdata', function () {
@@ -841,14 +848,21 @@ UnitTest.asynctest('browser.tinymce.core.html.SaxParserTest', function () {
   });
 
   suite.test('Parse cdata with comments and trim those comments away', function () {
-    let counter, parser;
+    const testCDataSaxParse = (inputHtml: string, outputHtml: string, counters: Record<string, number>) => {
+      let counter, parser;
 
-    counter = createCounter(writer);
-    parser = SaxParser(counter, schema);
-    writer.reset();
-    parser.parse('<![CDATA[<!--x--><!--y-->--><!--]]>');
-    LegacyUnit.equal(writer.getContent(), '<![CDATA[xy]]>');
-    LegacyUnit.deepEqual(counter.counts, { cdata: 1 });
+      counter = createCounter(writer);
+      counter.validate = true;
+      parser = SaxParser(counter, schema);
+      writer.reset();
+      parser.parse(inputHtml);
+      LegacyUnit.equal(writer.getContent(), outputHtml);
+      LegacyUnit.deepEqual(counter.counts, counters);
+    };
+
+    testCDataSaxParse('<![CDATA[<!--x--><!--y--!>--><!--]]>', '<![CDATA[xy]]>', { cdata: 1 });
+    testCDataSaxParse('<![CDATA[------>>>xy]]>', '<![CDATA[xy]]>', { cdata: 1 });
+    testCDataSaxParse('<![CDATA[------!>>!>xy]]>', '<![CDATA[xy]]>', { cdata: 1 });
   });
 
   suite.test('Parse special elements', function () {
@@ -857,6 +871,7 @@ UnitTest.asynctest('browser.tinymce.core.html.SaxParserTest', function () {
     const specialHtml = (
       '<b>' +
       '<textarea></b></textarea><title></b></title><script></b></script>' +
+      '<iframe><img src="image.png"></iframe>' +
       '<noframes></b></noframes><noscript></b></noscript><style></b></style>' +
       '<xmp></b></xmp>' +
       '<noembed></b></noembed>' +
@@ -868,7 +883,7 @@ UnitTest.asynctest('browser.tinymce.core.html.SaxParserTest', function () {
     writer.reset();
     parser.parse(specialHtml);
     LegacyUnit.equal(writer.getContent(), specialHtml);
-    LegacyUnit.deepEqual(counter.counts, { start: 9, text: 8, end: 9 });
+    LegacyUnit.deepEqual(counter.counts, { start: 10, text: 9, end: 10 });
   });
 
   suite.test('Parse malformed elements that start with numbers', function () {

@@ -1,6 +1,6 @@
 {
   "name": "tinymce",
-  "version": "4.9.3",
+  "version": "4.9.11",
   "repository": {
     "type": "git",
     "url": "https://github.com/tinymce/tinymce.git"
@@ -23,22 +23,23 @@
   "dependencies": {
     "@ephox/alloy": "2.2.3",
     "@ephox/boulder": "3.2.1",
-    "@ephox/darwin": "latest",
-    "@ephox/dom-globals": "latest",
-    "@ephox/imagetools": "latest",
-    "@ephox/katamari": "latest",
-    "@ephox/robin": "latest",
-    "@ephox/sand": "latest",
-    "@ephox/snooker": "latest",
-    "@ephox/sugar": "latest",
+    "@ephox/darwin": "3.0.39",
+    "@ephox/dom-globals": "1.1.2",
+    "@ephox/imagetools": "3.2.6",
+    "@ephox/katamari": "4.0.3",
+    "@ephox/robin": "7.0.40",
+    "@ephox/sand": "2.0.21",
+    "@ephox/snooker": "5.0.17",
+    "@ephox/sugar": "5.0.14",
     "tslib": "^1.9.3"
   },
   "devDependencies": {
-    "@ephox/agar": "latest",
-    "@ephox/bedrock": "latest",
-    "@ephox/mcagar": "latest",
-    "@ephox/swag": "latest",
-    "@ephox/wrap-jsverify": "latest",
+    "@ephox/agar": "4.14.1",
+    "@ephox/bedrock-client": "9.3.2",
+    "@ephox/bedrock-server": "9.3.2",
+    "@ephox/mcagar": "4.0.42",
+    "@ephox/swag": "4.1.4",
+    "@ephox/wrap-jsverify": "2.0.1",
     "awesome-typescript-loader": "^5.2.0",
     "grunt": "~1.0.2",
     "grunt-contrib-clean": "~1.1.0",
@@ -62,5 +63,18 @@
     "webpack": "^4.8.3",
     "webpack-dev-server": "^3.1.5",
     "webpack-livereload-plugin": "^2.1.1"
+  },
+  "resolutions": {
+    "rollup": "1.21.4",
+    "@ephox/agar": "4.14.1",
+    "@ephox/boss": "3.0.44",
+    "@ephox/boulder": "3.2.1",
+    "@ephox/dragster": "4.0.36",
+    "@ephox/katamari": "4.0.3",
+    "@ephox/robin": "7.0.40",
+    "@ephox/sand": "2.0.21",
+    "@ephox/snooker": "5.0.17",
+    "@ephox/sugar": "5.0.14",
+    "@ephox/phoenix": "5.0.46"
   }
 }
